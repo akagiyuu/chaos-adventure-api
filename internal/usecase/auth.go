@@ -26,18 +26,18 @@ type Auth struct {
 func NewAuth(
 	cfg *config.Config,
 	repo ports.Repository,
-) (*Auth, error) {
+) (Auth, error) {
 	privkey, err := jwk.ParseKey(cfg.JWTSecret)
 	if err != nil {
-		return nil, err
+		return Auth{}, err
 	}
 
 	pubkey, err := jwk.PublicKeyOf(privkey)
 	if err != nil {
-		return nil, err
+		return Auth{}, err
 	}
 
-	return &Auth{
+	return Auth{
 		privkey:   privkey,
 		pubkey:    pubkey,
 		expiredIn: time.Duration(cfg.JWTExpiredIn) * time.Hour,
