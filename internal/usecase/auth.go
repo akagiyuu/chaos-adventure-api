@@ -1,16 +1,18 @@
 package usecase
 
 import (
+	"context"
 	"fmt"
-	"go/printer"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/lestrrat-go/jwx/v3/jwa"
 	"github.com/lestrrat-go/jwx/v3/jwk"
 	"github.com/lestrrat-go/jwx/v3/jwt"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/akagiyuu/chaos-adventure-api/internal/config"
+	"github.com/akagiyuu/chaos-adventure-api/internal/domain"
 	"github.com/akagiyuu/chaos-adventure-api/internal/ports"
 )
 
@@ -77,4 +79,32 @@ func (u *Auth) ParseToken(raw []byte) (uuid.UUID, error) {
 	}
 
 	return id, nil
+}
+
+func (u *Auth) Register(ctx context.Context, data domain.RegisterData) (uuid.UUID, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	data.Password = string(hashedPassword)
+
+	id, err := u.repo.CreateAccount(ctx, data)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return id, nil
+}
+
+func (u *Auth) Login(ctx context.Context, data domain.LoginData) (uuid.UUID, error) {
+	account, err := u.repo.GetAccountByUsername(ctx, data.Username)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	err = bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(data.Password))
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return account.ID, nil
 }
