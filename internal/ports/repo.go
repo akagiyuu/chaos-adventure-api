@@ -10,4 +10,7 @@ import (
 type Repository interface {
 	CreateAccount(ctx context.Context, username string, password string) (uuid.UUID, error)
 	GetAccount(ctx context.Context, id uuid.UUID) (*domain.Account, error)
+
+	CreateRank(ctx context.Context, accountID uuid.UUID, time float32) error
+	GetAllRank(ctx context.Context)
 }
