@@ -8,7 +8,7 @@ import (
 )
 
 type Repository interface {
-	CreateAccount(ctx context.Context, username string, password string) (uuid.UUID, error)
+	CreateAccount(ctx context.Context, data domain.RegisterData) (uuid.UUID, error)
 	GetAccount(ctx context.Context, id uuid.UUID) (*domain.Account, error)
 	GetAccountByUsername(ctx context.Context, username string) (*domain.Account, error)
 
