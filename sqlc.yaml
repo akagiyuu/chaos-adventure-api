@@ -1,12 +1,12 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "internal/adapters/repo/query/"
+    queries: "internal/adapters/repo/database/query/"
     schema: "migration/"
     gen:
       go:
         package: "database"
-        out: "internal/adapters/repo"
+        out: "internal/adapters/repo/database"
         sql_package: "pgx/v5"
         overrides:
           - db_type: "uuid"
