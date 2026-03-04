@@ -111,3 +111,12 @@ func (u *Auth) Login(ctx context.Context, data domain.LoginData) (uuid.UUID, err
 
 	return account.ID, nil
 }
+
+func (u *Auth) Self(ctx context.Context, id uuid.UUID) (*domain.Account, error) {
+	account, err := u.repo.GetAccount(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	return account, nil
+}
