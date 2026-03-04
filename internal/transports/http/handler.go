@@ -12,6 +12,7 @@ func (s *Server) RegisterRoutes(f *fuego.Server) {
 
 	auth := fuego.Group(f, "/auth")
 	fuego.Post(auth, "/register", s.Register)
+	fuego.Post(auth, "/login", s.Login)
 }
 
 func (s *Server) OpenAPI(specURL string) http.Handler {
