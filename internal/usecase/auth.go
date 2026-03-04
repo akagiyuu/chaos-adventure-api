@@ -27,7 +27,7 @@ func NewAuth(
 	cfg *config.Config,
 	repo ports.Repository,
 ) (Auth, error) {
-	privkey, err := jwk.ParseKey(cfg.JWTSecret)
+	privkey, err := jwk.Import([]byte(cfg.JWTSecret))
 	if err != nil {
 		return Auth{}, err
 	}
