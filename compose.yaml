@@ -1,0 +1,47 @@
+services:
+  database:
+    image: postgres:latest
+    container_name: chaos-adventure-database
+    restart: on-failure:5
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_DB: ${PG_DB}
+    volumes:
+      - database:/var/lib/postgresql
+    networks:
+      - internal
+
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    container_name: chaos-adventure-database
+    restart: on-failure:5
+    volumes:
+      - cloudbeaver:/opt/cloudbeaver/workspace
+    networks:
+      - internal
+
+  api:
+    image: ${REGISTRY}/api:latest
+    container_name: chaos-adventure-api
+    restart: on-failure:5
+    depends_on:
+      - database
+    environment:
+      DATABASE_URL: postgres://${PG_USER}:${PG_PASS}@database/${PG_DB}
+    networks:
+      - internal
+
+
+networks:
+  internal:
+    name: chaos-adventure-network
+    external: true
+
+volumes:
+  database:
+    name: chaos-adventure-database
+    external: true
+  cloudbeaver:
+    name: chaos-adventure-cloudbeaver
+    external: true
