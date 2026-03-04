@@ -17,31 +17,31 @@ import (
 )
 
 type Auth struct {
-	privkey   jwk.Key
-	pubkey    jwk.Key
-	expiredIn time.Duration
-	repo      ports.Repository
+	privateKey jwk.Key
+	PublicKey  jwk.Key
+	expiredIn  time.Duration
+	repo       ports.Repository
 }
 
 func NewAuth(
 	cfg *config.Config,
 	repo ports.Repository,
 ) (Auth, error) {
-	privkey, err := jwk.Import([]byte(cfg.JWTSecret))
+	privateKey, err := jwk.Import([]byte(cfg.JWTSecret))
 	if err != nil {
 		return Auth{}, err
 	}
 
-	pubkey, err := jwk.PublicKeyOf(privkey)
+	publicKey, err := jwk.PublicKeyOf(privateKey)
 	if err != nil {
 		return Auth{}, err
 	}
 
 	return Auth{
-		privkey:   privkey,
-		pubkey:    pubkey,
-		expiredIn: time.Duration(cfg.JWTExpiredIn) * time.Hour,
-		repo:      repo,
+		privateKey: privateKey,
+		PublicKey:  publicKey,
+		expiredIn:  time.Duration(cfg.JWTExpiredIn) * time.Hour,
+		repo:       repo,
 	}, nil
 }
 
@@ -54,7 +54,7 @@ func (u *Auth) CreateToken(id uuid.UUID) ([]byte, error) {
 		return nil, err
 	}
 
-	signed, err := jwt.Sign(token, jwt.WithKey(jwa.RS256(), u.privkey))
+	signed, err := jwt.Sign(token, jwt.WithKey(jwa.RS256(), u.privateKey))
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (u *Auth) CreateToken(id uuid.UUID) ([]byte, error) {
 }
 
 func (u *Auth) ParseToken(raw []byte) (uuid.UUID, error) {
-	token, err := jwt.Parse(raw, jwt.WithKey(jwa.RS256(), u.pubkey))
+	token, err := jwt.Parse(raw, jwt.WithKey(jwa.RS256(), u.PublicKey))
 	if err != nil {
 		return uuid.Nil, err
 	}
