@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"crypto/rand"
+	"crypto/rsa"
 	"fmt"
 	"time"
 
@@ -27,7 +29,8 @@ func NewAuth(
 	cfg *config.Config,
 	repo ports.Repository,
 ) (Auth, error) {
-	privateKey, err := jwk.Import([]byte(cfg.JWTSecret))
+	key, err := rsa.GenerateKey(rand.Reader, 2048)
+	privateKey, err := jwk.Import(key)
 	if err != nil {
 		return Auth{}, err
 	}
