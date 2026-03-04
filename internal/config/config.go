@@ -5,6 +5,6 @@ type Config struct {
 
 	DatabaseURL string `env:"DATBASE_URL"`
 
-	JWTSecret    []byte `env:"JWT_SECRET" envDefault:"secret"`
+	JWTSecret    string `env:"JWT_SECRET" envDefault:"secret"`
 	JWTExpiredIn int    `env:"JWT_EXPIRED_IN" envDefault:"24"` // hour
 }
