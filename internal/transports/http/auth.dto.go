@@ -13,7 +13,6 @@ type LoginData struct {
 }
 
 type Account struct {
-	ID       uuid.UUID
-	Username string
-	Password string
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
 }
