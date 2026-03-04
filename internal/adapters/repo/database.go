@@ -19,10 +19,13 @@ type Database struct {
 	pool *pgxpool.Pool
 }
 
-var _ ports.Repository = &Database{}
+var _ ports.Repository = Database{}
 
-func NewDatabase(cfg config.Config) (Database, error) {
-	pgxConfig, _ := pgxpool.ParseConfig(cfg.DatabaseURL)
+func NewDatabase(cfg *config.Config) (Database, error) {
+	pgxConfig, err := pgxpool.ParseConfig(cfg.DatabaseURL)
+	if err != nil {
+		return Database{}, err
+	}
 
 	pgxConfig.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
 		pgxUUID.Register(conn.TypeMap())
@@ -37,7 +40,7 @@ func NewDatabase(cfg config.Config) (Database, error) {
 	return Database{pool}, nil
 }
 
-func (db *Database) CreateAccount(ctx context.Context, data domain.RegisterData) (uuid.UUID, error) {
+func (db Database) CreateAccount(ctx context.Context, data domain.RegisterData) (uuid.UUID, error) {
 	inner := database.New(db.pool)
 
 	var params database.CreateAccountParams
@@ -46,7 +49,7 @@ func (db *Database) CreateAccount(ctx context.Context, data domain.RegisterData)
 	return inner.CreateAccount(ctx, params)
 }
 
-func (db *Database) GetAccount(ctx context.Context, id uuid.UUID) (*domain.Account, error) {
+func (db Database) GetAccount(ctx context.Context, id uuid.UUID) (*domain.Account, error) {
 	inner := database.New(db.pool)
 
 	raw, err := inner.GetAccount(ctx, id)
@@ -63,7 +66,7 @@ func (db *Database) GetAccount(ctx context.Context, id uuid.UUID) (*domain.Accou
 	return &account, nil
 }
 
-func (db *Database) GetAccountByUsername(ctx context.Context, username string) (*domain.Account, error) {
+func (db Database) GetAccountByUsername(ctx context.Context, username string) (*domain.Account, error) {
 	inner := database.New(db.pool)
 
 	raw, err := inner.GetAccountByUsername(ctx, username)
