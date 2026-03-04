@@ -22,7 +22,7 @@ func (s *Server) Register(c fuego.ContextWithBody[RegisterData]) (string, error)
 	if err != nil {
 		return "", fuego.BadRequestError{
 			Err:    err,
-			Detail: "Account with given email already existed",
+			Detail: "Account with given username already existed",
 		}
 	}
 
@@ -51,7 +51,7 @@ func (s *Server) Login(c fuego.ContextWithBody[LoginData]) (string, error) {
 	if err != nil {
 		return "", fuego.BadRequestError{
 			Err:    err,
-			Detail: "Wrong email or password",
+			Detail: "Wrong username or password",
 		}
 	}
 
