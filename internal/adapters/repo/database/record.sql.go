@@ -33,6 +33,7 @@ SELECT
     time,
     created_at
 FROM records r
+ORDER BY time, created_at DESC
 `
 
 type GetAllRecordRow struct {

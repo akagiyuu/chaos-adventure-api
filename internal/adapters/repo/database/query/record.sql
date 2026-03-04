@@ -7,4 +7,5 @@ SELECT
     (SELECT username FROM accounts WHERE id = r.account_id) as username,
     time,
     created_at
-FROM records r;
+FROM records r
+ORDER BY time, created_at DESC;
