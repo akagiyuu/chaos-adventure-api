@@ -14,7 +14,7 @@ services:
 
   cloudbeaver:
     image: dbeaver/cloudbeaver:latest
-    container_name: chaos-adventure-database
+    container_name: chaos-adventure-cloudbeaver
     restart: on-failure:5
     volumes:
       - cloudbeaver:/opt/cloudbeaver/workspace
