@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createRecord = `-- name: CreateRecord :exec
@@ -27,25 +28,29 @@ func (q *Queries) CreateRecord(ctx context.Context, arg CreateRecordParams) erro
 }
 
 const getAllRecord = `-- name: GetAllRecord :many
-SELECT id, account_id, time, created_at
-FROM records
+SELECT 
+    (SELECT username FROM accounts WHERE id = r.account_id) as username,
+    time,
+    created_at
+FROM records r
 `
 
-func (q *Queries) GetAllRecord(ctx context.Context) ([]Record, error) {
+type GetAllRecordRow struct {
+	Username  string
+	Time      float32
+	CreatedAt pgtype.Timestamptz
+}
+
+func (q *Queries) GetAllRecord(ctx context.Context) ([]GetAllRecordRow, error) {
 	rows, err := q.db.Query(ctx, getAllRecord)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Record
+	var items []GetAllRecordRow
 	for rows.Next() {
-		var i Record
-		if err := rows.Scan(
-			&i.ID,
-			&i.AccountID,
-			&i.Time,
-			&i.CreatedAt,
-		); err != nil {
+		var i GetAllRecordRow
+		if err := rows.Scan(&i.Username, &i.Time, &i.CreatedAt); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
