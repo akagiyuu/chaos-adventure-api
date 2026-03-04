@@ -6,10 +6,18 @@ package database
 
 import (
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Account struct {
 	ID       uuid.UUID
 	Username string
 	Password string
+}
+
+type Record struct {
+	ID        uuid.UUID
+	AccountID uuid.UUID
+	Time      float32
+	CreatedAt pgtype.Timestamptz
 }
