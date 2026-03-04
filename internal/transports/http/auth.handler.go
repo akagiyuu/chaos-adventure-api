@@ -6,11 +6,6 @@ import (
 	"github.com/jinzhu/copier"
 )
 
-type RegisterData struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
 func (s *Server) Register(c fuego.ContextWithBody[RegisterData]) ([]byte, error) {
 	ctx := c.Context()
 
