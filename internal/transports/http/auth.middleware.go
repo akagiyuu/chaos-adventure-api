@@ -34,10 +34,11 @@ func (s *Server) RequireToken(next http.Handler) http.Handler {
 
 		id, err := s.Auth.ParseToken([]byte(token))
 		if err != nil {
-			fuego.SendJSONError(w, nil, fuego.UnauthorizedError{
+			err = fuego.ErrorHandler(r.Context(), fuego.UnauthorizedError{
 				Err:    err,
 				Detail: "Invalid authorization token",
 			})
+			fuego.SendJSONError(w, nil, err)
 			return
 		}
 
