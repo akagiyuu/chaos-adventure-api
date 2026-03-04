@@ -3,7 +3,9 @@ package http
 import (
 	"net/http"
 
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-fuego/fuego"
+	"github.com/go-fuego/fuego/option"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
@@ -13,6 +15,10 @@ func (s *Server) RegisterRoutes(f *fuego.Server) {
 	auth := fuego.Group(f, "/auth")
 	fuego.Post(auth, "/register", s.Register)
 	fuego.Post(auth, "/login", s.Login)
+	fuego.Get(auth, "/self", s.Self,
+		option.Middleware(s.RequireToken),
+		option.Security(openapi3.SecurityRequirement{"bearerAuth": []string{}}),
+	)
 }
 
 func (s *Server) OpenAPI(specURL string) http.Handler {
