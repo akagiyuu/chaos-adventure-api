@@ -19,6 +19,13 @@ func (s *Server) RegisterRoutes(f *fuego.Server) {
 		option.Middleware(s.RequireToken),
 		option.Security(openapi3.SecurityRequirement{"bearerAuth": []string{}}),
 	)
+
+	record := fuego.Group(f, "/record")
+	fuego.Post(record, "/", s.CreateRecord,
+		option.Middleware(s.RequireToken),
+		option.Security(openapi3.SecurityRequirement{"bearerAuth": []string{}}),
+	)
+	fuego.Get(record, "/", s.GetAllRecord)
 }
 
 func (s *Server) OpenAPI(specURL string) http.Handler {

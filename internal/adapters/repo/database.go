@@ -82,3 +82,29 @@ func (db Database) GetAccountByUsername(ctx context.Context, username string) (*
 
 	return &account, nil
 }
+
+func (db Database) CreateRecord(ctx context.Context, accountID uuid.UUID, time float32) error {
+	inner := database.New(db.pool)
+
+	return inner.CreateRecord(ctx, database.CreateRecordParams{
+		AccountID: accountID,
+		Time:      time,
+	})
+}
+
+func (db Database) GetAllRecord(ctx context.Context) ([]domain.Record, error) {
+	inner := database.New(db.pool)
+
+	raw, err := inner.GetAllRecord(ctx)
+	if err == pgx.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	var records []domain.Record
+	copier.Copy(&records, &raw)
+
+	return records, nil
+}
