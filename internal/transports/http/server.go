@@ -12,6 +12,7 @@ import (
 type Server struct {
 	Config *config.Config
 	Auth   usecase.Auth
+	Record usecase.Record
 }
 
 func (s *Server) Build() *fuego.Server {

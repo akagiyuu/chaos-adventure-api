@@ -54,9 +54,15 @@ func main() {
 		log.Fatal(err)
 	}
 
+	record := usecase.Record{Repo: repo}
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	s := server.Server{
 		Config: &cfg,
 		Auth:   auth,
+		Record: record,
 	}
 	server := s.Build()
 
