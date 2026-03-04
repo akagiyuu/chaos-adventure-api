@@ -1,0 +1,41 @@
+package http
+
+import (
+	"github.com/akagiyuu/chaos-adventure-api/internal/domain"
+	"github.com/go-fuego/fuego"
+	"github.com/jinzhu/copier"
+)
+
+type RegisterData struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func (s *Server) Register(c fuego.ContextWithBody[RegisterData]) ([]byte, error) {
+	ctx := c.Context()
+
+	body, err := c.Body()
+	if err != nil {
+		return nil, err
+	}
+
+	var data domain.RegisterData
+	copier.Copy(&data, &body)
+	id, err := s.Auth.Register(ctx, data)
+	if err != nil {
+		return nil, fuego.BadRequestError{
+			Err:    err,
+			Detail: "Account with given email already existed",
+		}
+	}
+
+	token, err := s.Auth.CreateToken(id)
+	if err != nil {
+		return nil, fuego.InternalServerError{
+			Err:    err,
+			Detail: "Failed to generate token",
+		}
+	}
+
+	return token, nil
+}
