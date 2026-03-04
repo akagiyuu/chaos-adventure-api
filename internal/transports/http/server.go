@@ -3,16 +3,23 @@ package http
 import (
 	"fmt"
 
+	"github.com/akagiyuu/chaos-adventure-api/internal/config"
+	"github.com/akagiyuu/chaos-adventure-api/internal/usecase"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-fuego/fuego"
 )
 
-func (h *Handler) BuildServer() *fuego.Server {
-	s := fuego.NewServer(
-		fuego.WithAddr(fmt.Sprintf(":%d", h.Config.Port)),
+type Server struct {
+	Config *config.Config
+	Auth   usecase.Auth
+}
+
+func (s *Server) Build() *fuego.Server {
+	f := fuego.NewServer(
+		fuego.WithAddr(fmt.Sprintf(":%d", s.Config.Port)),
 		fuego.WithEngineOptions(
 			fuego.WithOpenAPIConfig(fuego.OpenAPIConfig{
-				UIHandler:            h.OpenAPI,
+				UIHandler:            s.OpenAPI,
 				DisableDefaultServer: true,
 				DisableMessages:      true,
 				Info: &openapi3.Info{
@@ -31,7 +38,7 @@ func (h *Handler) BuildServer() *fuego.Server {
 			},
 		}),
 	)
-	h.RegisterRoutes(s)
+	s.RegisterRoutes(f)
 
-	return s
+	return f
 }

@@ -14,7 +14,7 @@ import (
 
 	"github.com/akagiyuu/chaos-adventure-api/internal/adapters/repo"
 	"github.com/akagiyuu/chaos-adventure-api/internal/config"
-	handler "github.com/akagiyuu/chaos-adventure-api/internal/transports/http"
+	server "github.com/akagiyuu/chaos-adventure-api/internal/transports/http"
 	"github.com/akagiyuu/chaos-adventure-api/internal/usecase"
 )
 
@@ -54,11 +54,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	handler := handler.Handler{
+	s := server.Server{
 		Config: &cfg,
 		Auth:   auth,
 	}
-	server := handler.BuildServer()
+	server := s.Build()
 
 	done := make(chan bool, 1)
 
