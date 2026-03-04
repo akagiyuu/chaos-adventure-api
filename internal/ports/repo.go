@@ -12,6 +12,6 @@ type Repository interface {
 	GetAccount(ctx context.Context, id uuid.UUID) (*domain.Account, error)
 	GetAccountByUsername(ctx context.Context, username string) (*domain.Account, error)
 
-	CreateRank(ctx context.Context, id uuid.UUID, time float32) error
-	GetAllRank(ctx context.Context) ([]domain.Rank, error)
+	CreateRecord(ctx context.Context, id uuid.UUID, time float32) error
+	GetAllRecord(ctx context.Context) ([]domain.Rank, error)
 }
