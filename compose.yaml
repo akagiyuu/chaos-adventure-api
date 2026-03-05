@@ -32,6 +32,16 @@ services:
     networks:
       - internal
 
+  cloudflare-tunnel:
+    container_name: chaos-adventure-system-cloudflare
+    image: cloudflare/cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    networks:
+      - network
+
 
 networks:
   internal:
