@@ -40,7 +40,7 @@ services:
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     networks:
-      - network
+      - internal
 
 
 networks:
